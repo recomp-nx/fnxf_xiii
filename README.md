@@ -23,6 +23,9 @@ Additional improvements:
 - The Switch's buttons in the game's interface
 - Removed two first popups about selecting user and mass storage device, removed mass storage device option from save menu
 
+## Performance
+Goal was to get 30 FPS in two places: in first tutorial battle when it shows if you want to start tutorial, and in first walkable section. In both 30 FPS is achievable with standard handheld clocks of 1020 MHz (CPU), 460 MHz (GPU) and 1331 MHz (RAM). It is recommended though to use higher clocks for getting locked 30 FPS experience because around 50% of game is holding 30 FPS with those clocks, except for busy fights first location in Chapter 8 is the most demanding one in whole game.
+
 ## Required game files
 
 The Xbox 360 release with Title ID `535107E4` and Media ID `602A3E5A`.
