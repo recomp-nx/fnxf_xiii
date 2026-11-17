@@ -63,7 +63,7 @@ On the SD card, into `/switch/fnxf_xiii/assets`:
 2. Copy the contents of Disc 2, skipping every file that is already there under the same name.
 2. Copy the contents of Disc 3, skipping every file that is already there under the same name.
 
-The first start compiles the game's shaders on the console.
+The first start compiles the game's shaders on the console. It should take 30-40 minutes to finish. Game will push additional shaders via executable on first run, it is advised to go to gameplay part, immediately close game and boot game again. You should get additional 400 shaders precompiled. 
 
 ## Language packs
 
