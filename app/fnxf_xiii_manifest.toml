@@ -1,0 +1,99 @@
+# The game (Xbox 360, title 535107E4, default.xex 0.0.0.2, XDK 2.0.9328).
+# The game's files are not part of this project: put default.xex at app/assets/default.xex (or a link to it).
+[project]
+name = "fnxf_xiii"
+sdk_version = "0.10.0"
+game_root = "assets"
+
+[entrypoint]
+file_path = "assets/default.xex"
+out_directory_path = "generated/default"
+includes = ["overrides.toml"]
+# fnxf_xiii (2026-10-21): each function in its own file (generated/default/fnxf_xiii_recomp_<address>.cpp): a function's
+# file and lines stay the same when others change, which keeps a GCC profile (PGO) valid for it.
+one_function_per_file = true
+# fnxf_xiii (2026-10-23): fctid / fctidz / fctiw through rex::ppc (diet_ops.h). The default expression uses
+# simde_mm_cvtsd_si64/si32, which on AArch64 is (int)round(v): halves away from zero (2.5 -> 3), where PowerPC
+# rounds in FPSCR.RN (to nearest even by default: 2.5 -> 2). Checked against qemu-ppc fctiw.
+fcti_inline = true
+# fnxf_xiii (2026-10-25): rlwinm / rlwimi with an immediate shift and a mask that does not wrap as the plain 32-bit
+# shift / bit-field operation (one AArch64 instruction instead of two or three). On the profile's hot functions
+# (2026-10-25 profile, weighted by samples): 0.76% fewer instructions. Exact: sdk/tests/rotate_word_test.cpp (every shift
+# and mask, 5.1 million comparisons, 0 differences) and tools/locals_difftest on the hot functions it changes: 24 leaf
+# functions (300 trials) and 19 functions run with every function they call (65 in all): 0 different.
+# Measured and left off, same profile: div_inline and fp_compares_modeless (no change), fp_moves_modeless (+2.5%
+# instructions, 8 of 738 mode switches gone), dform_disp_split (store cards could no longer be shared).
+rotate_word_shifts = true
+# fnxf_xiii (2026-10-24): the PowerPC registers no call can see in C++ locals of each function instead of the context
+# in memory: r14-r31 and f14-f31 (non-volatile: a callee saves and restores them, so with locals the save/restore
+# helper calls go), the condition fields, CTR, XER and the lwarx reservation. Every instruction on them was a load and
+# a store of ctx (the compiler cannot keep ctx in registers across the volatile guest accesses). Measured on the 44
+# hottest functions of the main thread and the job threads (Switch flags): 11% fewer instructions, about 60% fewer
+# loads and stores of the context.
+# The vector registers v14-v31 / v64-v127 stay in ctx (non_volatile_as_local_keep): the game's vector leaf functions use
+# them as scratch without saving them (82226DC8, 82295E28, 822A7188: what the caller then sees is what they left),
+# which locals would change.
+# Checked before turning it on (tools/read_before_write.py, tools/locals_difftest):
+#  - 4 functions read one of these registers before writing it, none a value from its caller: xor / subfe of a
+#    register with itself (8298B900, 8298BC90, 8273CDF0) and the CRT's setjmp (82A23B80, which the generator replaces).
+#  - no function reads a condition field, CTR or XER that a callee would have to have set (--kill-calls);
+#  - every lwarx and its stwcx. are in the same function (290 functions);
+#  - 514 leaf functions (the 225 hot ones of the 2026-10-24 profile and 300 at random) run under qemu-aarch64 against
+#    the code generated without these options, 30-100 random inputs each: every context field kept in ctx, guest
+#    memory, the caller's stack, the store cards and the FPCR the same. 10 differed only in what the elided helpers
+#    did: r12 (__restgprlr reloads it from the stack; it is scratch at a return) and the FPCR's flush bits
+#    (__savefpr / __restfpr switch to the FPU mode; every float instruction after a call checks the mode first);
+#    16 never finished on random inputs (loops), 11 need the runtime to link.
+#  - 342 functions run with every function they call (call trees of 2-25 functions, the 203 hot ones whose tree
+#    needs no runtime and 200 at random), 30 inputs each: 1 differed (82896D68: a random loop count ran past its
+#    432-byte stack buffer over the saved r30, which the code without locals then restored), 16 never finished.
+#  - the whole tree (44,209 files) compiles (syntax) with the Switch flags.
+# Off: delete these lines (a full rebuild either way: every generated file changes; build_switch.py --regen).
+non_volatile_as_local = true
+cr_as_local = true
+ctr_as_local = true
+xer_as_local = true
+reserved_as_local = true
+non_volatile_as_local_keep = ["v14-v31", "v64-v127"]
+# fnxf_xiii (2026-10-25): r0, r2, r11, r12, f0 and v32-v63 (scratch registers no ABI call keeps) as locals too. A further
+# 7% fewer instructions on the hot set (18% in all with the lines above). tools/non_argument_audit.py found where a
+# value crosses a call in them anyway; those functions keep them in ctx and their callers hand them over:
+#  - ENTRY (a callee that reads one on entry): the CRT's SEH funclets (r12: their frame), the stack probe 82971AD4
+#    (r12), 82318950 / 8231FA18 (v63), 82425E20 (r11), 828B2F30 (v56-v59), 82A25554 (r2);
+#  - RET (a caller that reads one a callee left): 8231FA18 <= 8231A110 (v63), 82981978 <= 82981A40 (r11), and
+#    829FE600 <= 82977850 (r11; that path is the CRT's exit); the four whose read is `subfe rX,r11,r11` are independent
+#    of the value.
+#  The audit of the code generated with the option: HANDOVER 0 (every such call copies the registers in and back).
+#  tools/locals_difftest: 560 leaf functions (274 hot, 300 at random) against the code with only the lines above:
+#  0 different; 19 never finished on random inputs, the rest need the runtime. And 342 functions run with every
+#  function they call (the same call trees as above): 0 different, 16 never finished. The whole tree compiles.
+non_argument_as_local = true
+non_argument_as_local_keep = [0x82318950, 0x8231A110, 0x8231FA18, 0x82425E20, 0x828B2F30, 0x8297056C, 0x8297058C, 0x829710B8, 0x829710D8, 0x8297131C, 0x8297133C, 0x82971498, 0x829714B8, 0x82971AD4, 0x829754C8, 0x829754E8, 0x82975810, 0x82975830, 0x829759E0, 0x82975A00, 0x82975F20, 0x82975F40, 0x829777EC, 0x8297780C, 0x82977850, 0x82977B40, 0x82977B6C, 0x82977C74, 0x82977C94, 0x8297940C, 0x8297942C, 0x8297E9AC, 0x8297E9CC, 0x8297F73C, 0x8297F75C, 0x8297F990, 0x8297F9B0, 0x8297FD80, 0x8297FDA0, 0x8298092C, 0x8298094C, 0x82980B94, 0x82980BB4, 0x82981978, 0x82981A40, 0x82982348, 0x82982368, 0x82989C84, 0x82989CAC, 0x82989F7C, 0x82989FA4, 0x8298A840, 0x8298A860, 0x82993CBC, 0x82993D3C, 0x82993DB4, 0x829FE600, 0x82A23508, 0x82A24598, 0x82A252E0, 0x82A2530C, 0x82A25554]
+fp_origin_log = false
+
+[entrypoint.functions]
+0x826B1958 = { size = 8 }
+0x823EF7C0 = { size = 8 }
+0x823EF4A0 = { size = 8 }
+0x829B1000 = { size = 8 }
+0x82942F10 = { size = 20 }
+0x826F5C70 = { size = 8 }
+0x82817258 = { size = 116 }
+0x8244B4F8 = { size = 52 }
+0x823EF480 = { size = 8 }
+0x823EF968 = { size = 8 }
+0x822F4EA8 = { size = 12 }
+0x826B19C8 = { size = 16 }
+0x82A0B398 = { size = 20 }
+0x8270C544 = { parent = 0x8270C530, size = 36 }  # fnxf_xiii (2026-11-01): was 56, which ran 20 bytes into sub_8270C568 (tools/truncation_check.py)
+0x823EE320 = { size = 8 }
+0x823EF908 = { size = 8 }
+0x823EF488 = { size = 8 }
+0x823EF478 = { size = 8 }
+0x824741E0 = { size = 4 }
+0x826B4930 = { size = 8 }
+0x823E4B90 = { size = 8 }
+0x827091E8 = { size = 156 }
+0x827CD740 = { size = 4 }
+0x827CC8C8 = { size = 4 }
+0x827576B0 = { size = 44 }

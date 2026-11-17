@@ -1,0 +1,518 @@
+# Hand-written fixes for the entrypoint; each needs its evidence.
+setjmp_address  = 0x82A23B80
+longjmp_address = 0x82A23860
+
+[functions]
+0x821F3078 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xC4(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F3088 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xD4(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F3098 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xE4(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F30A8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xF4(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F30B8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x104(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F30C8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x114(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F30D8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xA8(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F30E8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xB8(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F30F8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xC8(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F3108 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xD8(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F3118 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xE8(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F3128 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xF8(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F3138 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x108(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F3148 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xAC(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F3158 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xBC(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F3168 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xCC(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F3178 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xDC(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F3188 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xEC(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F3198 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xFC(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F31A8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x10C(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F31B8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xB0(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F31C8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xC0(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F31D8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xD0(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F31E8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xE0(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F31F8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xF0(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F3208 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x100(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F3218 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x110(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x821F3228 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0xB4(r12); mtctr; bctr), unclaimed gap 0x821F3078-0x821F3238
+0x8245B9B8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x8(r12); mtctr; bctr), unclaimed gap 0x8245B9B8-0x8245B9C8
+0x82727668 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x68(r12); mtctr; bctr), unclaimed gap 0x82727668-0x82727698
+0x82727678 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x78(r12); mtctr; bctr), unclaimed gap 0x82727668-0x82727698
+0x82727688 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x88(r12); mtctr; bctr), unclaimed gap 0x82727668-0x82727698
+0x827276A8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x4C(r12); mtctr; bctr), unclaimed gap 0x827276A8-0x827276E8
+0x827276B8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x5C(r12); mtctr; bctr), unclaimed gap 0x827276A8-0x827276E8
+0x827276C8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x6C(r12); mtctr; bctr), unclaimed gap 0x827276A8-0x827276E8
+0x827276D8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x7C(r12); mtctr; bctr), unclaimed gap 0x827276A8-0x827276E8
+0x827276F8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x50(r12); mtctr; bctr), unclaimed gap 0x827276F8-0x82727738
+0x82727708 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x60(r12); mtctr; bctr), unclaimed gap 0x827276F8-0x82727738
+0x82727718 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x70(r12); mtctr; bctr), unclaimed gap 0x827276F8-0x82727738
+0x82727728 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x80(r12); mtctr; bctr), unclaimed gap 0x827276F8-0x82727738
+0x82727738 = { size = 16 }  # runtime log fnxf_xiii_005.log: unregistered call; +0x40 in unclaimed gap 0x827276F8-0x82727748 (find_gaps evidence)
+0x82727748 = { size = 16 }  # runtime log fnxf_xiii_005.log: unregistered call; +0x40 in unclaimed gap 0x827276F8-0x82727748 (find_gaps evidence)
+0x82727758 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x54(r12); mtctr; bctr), unclaimed gap 0x82727758-0x82727798
+0x82727768 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x64(r12); mtctr; bctr), unclaimed gap 0x82727758-0x82727798
+0x82727778 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x74(r12); mtctr; bctr), unclaimed gap 0x82727758-0x82727798
+0x82727788 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x94(r12); mtctr; bctr), unclaimed gap 0x82727758-0x82727798
+0x8272BCA8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x10(r12); mtctr; bctr), unclaimed gap 0x8272BCA8-0x8272BCB8
+0x8272BCC8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x4(r12); mtctr; bctr), unclaimed gap 0x8272BCC8-0x8272BD08
+0x8272BCD8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x14(r12); mtctr; bctr), unclaimed gap 0x8272BCC8-0x8272BD08
+0x8272BCE8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x8(r12); mtctr; bctr), unclaimed gap 0x8272BCC8-0x8272BD08
+0x8272BCF8 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x18(r12); mtctr; bctr), unclaimed gap 0x8272BCC8-0x8272BD08
+0x828C2300 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x2C(r12); mtctr; bctr), unclaimed gap 0x828C2300-0x828C23C0
+0x828C2310 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x3C(r12); mtctr; bctr), unclaimed gap 0x828C2300-0x828C23C0
+0x828C2320 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x10(r12); mtctr; bctr), unclaimed gap 0x828C2300-0x828C23C0
+0x828C2330 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x20(r12); mtctr; bctr), unclaimed gap 0x828C2300-0x828C23C0
+0x828C2340 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x30(r12); mtctr; bctr), unclaimed gap 0x828C2300-0x828C23C0
+0x828C2350 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x40(r12); mtctr; bctr), unclaimed gap 0x828C2300-0x828C23C0
+0x828C2360 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x14(r12); mtctr; bctr), unclaimed gap 0x828C2300-0x828C23C0
+0x828C2370 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x24(r12); mtctr; bctr), unclaimed gap 0x828C2300-0x828C23C0
+0x828C2380 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x34(r12); mtctr; bctr), unclaimed gap 0x828C2300-0x828C23C0
+0x828C2390 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x18(r12); mtctr; bctr), unclaimed gap 0x828C2300-0x828C23C0
+0x828C23A0 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x28(r12); mtctr; bctr), unclaimed gap 0x828C2300-0x828C23C0
+0x828C23B0 = { size = 16 }  # vtable thunk (lwz r12,0(r3); lwz r11,0x38(r12); mtctr; bctr), unclaimed gap 0x828C2300-0x828C23C0
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 16-byte gap 0x82901BF0-0x82901C00; only this address is declared.
+"0x82901BF0" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 16-byte gap 0x8278FA88-0x8278FA98; only this address is declared.
+"0x8278FA88" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 32-byte gap 0x827C5B38-0x827C5B58; only this address is declared.
+"0x827C5B38" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x10 inside the 80-byte gap 0x8234CBE0-0x8234CC30; only this address is declared.
+"0x8234CBF0" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 16-byte gap 0x8234CBE0-0x8234CBF0; only this address is declared.
+"0x8234CBE0" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 8-byte gap 0x82661A78-0x82661A80; only this address is declared.
+"0x82661A78" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 24-byte gap 0x829CF600-0x829CF618; only this address is declared.
+"0x829CF600" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 8-byte gap 0x829B8F30-0x829B8F38; only this address is declared.
+"0x829B8F30" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 96-byte gap 0x82774B00-0x82774B60; only this address is declared.
+"0x82774B00" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x38 inside the 176-byte gap 0x827CD9A0-0x827CDA50; only this address is declared.
+"0x827CD9D8" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x18 inside the 56-byte gap 0x827CD9A0-0x827CD9D8; only this address is declared.
+"0x827CD9B8" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x8 inside the 24-byte gap 0x827CD9C0-0x827CD9D8; only this address is declared.
+"0x827CD9C8" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x18 inside the 112-byte gap 0x827CD9E0-0x827CDA50; only this address is declared.
+"0x827CD9F8" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 8-byte gap 0x827CDA70-0x827CDA78; only this address is declared.
+"0x827CDA70" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 24-byte gap 0x82768D60-0x82768D78; only this address is declared.
+"0x82768D60" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 112-byte gap 0x8283E430-0x8283E4A0; only this address is declared.
+"0x8283E430" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x8 inside the 16-byte gap 0x827186E0-0x827186F0; only this address is declared.
+"0x827186E8" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x10 inside the 72-byte gap 0x827CDA08-0x827CDA50; only this address is declared.
+"0x827CDA18" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x8 inside the 16-byte gap 0x827CDA08-0x827CDA18; only this address is declared.
+"0x827CDA10" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x8 inside the 32-byte gap 0x8233DF78-0x8233DF98; only this address is declared.
+"0x8233DF80" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 8-byte gap 0x8233E198-0x8233E1A0; only this address is declared.
+"0x8233E198" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 8-byte gap 0x827186E0-0x827186E8; only this address is declared.
+"0x827186E0" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 16-byte gap 0x82719808-0x82719818; only this address is declared.
+"0x82719808" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x8 inside the 16-byte gap 0x82706140-0x82706150; only this address is declared.
+"0x82706148" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 40-byte gap 0x829095B0-0x829095D8; only this address is declared.
+"0x829095B0" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 20-byte gap 0x8270C530-0x8270C544; only this address is declared.
+"0x8270C530" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 24-byte gap 0x827CD9A0-0x827CD9B8; only this address is declared.
+"0x827CD9A0" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x10 inside the 48-byte gap 0x827CDA20-0x827CDA50; only this address is declared.
+"0x827CDA30" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 8-byte gap 0x8291C268-0x8291C270; only this address is declared.
+"0x8291C268" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 36-byte gap 0x829FE8E8-0x829FE90C; only this address is declared.
+"0x829FE8E8" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 16-byte gap 0x823E39C8-0x823E39D8; only this address is declared.
+"0x823E39C8" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 8-byte gap 0x82738E38-0x82738E40; only this address is declared.
+"0x82738E38" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 24-byte gap 0x82719E38-0x82719E50; only this address is declared.
+"0x82719E38" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 8-byte gap 0x82661A90-0x82661A98; only this address is declared.
+"0x82661A90" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 40-byte gap 0x828FD5D0-0x828FD5F8; only this address is declared.
+"0x828FD5D0" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 48-byte gap 0x82968748-0x82968778; only this address is declared.
+"0x82968748" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x58 inside the 192-byte gap 0x827CE348-0x827CE408; only this address is declared.
+"0x827CE3A0" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x28 inside the 88-byte gap 0x827CE348-0x827CE3A0; only this address is declared.
+"0x827CE370" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x18 inside the 40-byte gap 0x827CE378-0x827CE3A0; only this address is declared.
+"0x827CE390" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 40-byte gap 0x82909560-0x82909588; only this address is declared.
+"0x82909560" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x28 inside the 96-byte gap 0x827CE3A8-0x827CE408; only this address is declared.
+"0x827CE3D0" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x20 inside the 48-byte gap 0x827CE3D8-0x827CE408; only this address is declared.
+"0x827CE3F8" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 32-byte gap 0x826F6958-0x826F6978; only this address is declared.
+"0x826F6958" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 20-byte gap 0x82909538-0x8290954C; only this address is declared.
+"0x82909538" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x10 inside the 40-byte gap 0x827CE3A8-0x827CE3D0; only this address is declared.
+"0x827CE3B8" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x30 inside the 72-byte gap 0x829639B0-0x829639F8; only this address is declared.
+"0x829639E0" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x18 inside the 48-byte gap 0x829639B0-0x829639E0; only this address is declared.
+"0x829639C8" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x8 inside the 16-byte gap 0x823E3DB0-0x823E3DC0; only this address is declared.
+"0x823E3DB8" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 24-byte gap 0x822245E0-0x822245F8; only this address is declared.
+"0x822245E0" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 16-byte gap 0x82616C98-0x82616CA8; only this address is declared.
+"0x82616C98" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 16-byte gap 0x82616D30-0x82616D40; only this address is declared.
+"0x82616D30" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 16-byte gap 0x82616F90-0x82616FA0; only this address is declared.
+"0x82616F90" = { }
+
+"0x8233DF78" = { }  # IDA sub_8233DF78, 8 bytes
+"0x823DC150" = { }  # IDA sub_823DC150, 8 bytes
+"0x823E3810" = { }  # IDA sub_823E3810, 8 bytes
+"0x826908B8" = { }  # IDA sub_826908B8, 40 bytes
+"0x82690F18" = { }  # IDA sub_82690F18, 28 bytes
+"0x826A1E98" = { }  # IDA sub_826A1E98, 16 bytes
+"0x826A1EE8" = { }  # IDA sub_826A1EE8, 28 bytes
+"0x82717678" = { }  # IDA sub_82717678, 8 bytes
+"0x827447B0" = { }  # IDA sub_827447B0, 8 bytes
+"0x827CCB18" = { }  # IDA sub_827CCB18, 8 bytes
+"0x827CCB28" = { }  # IDA sub_827CCB28, 8 bytes
+"0x827CCB30" = { }  # IDA sub_827CCB30, 8 bytes
+"0x827CCB48" = { }  # IDA sub_827CCB48, 8 bytes
+"0x827CCB70" = { }  # IDA sub_827CCB70, 8 bytes
+"0x827CCB78" = { }  # IDA sub_827CCB78, 8 bytes
+"0x827CCB90" = { }  # IDA sub_827CCB90, 8 bytes
+"0x827CCB98" = { }  # IDA sub_827CCB98, 8 bytes
+"0x827CCBA0" = { }  # IDA sub_827CCBA0, 8 bytes
+"0x827CCBB0" = { }  # IDA sub_827CCBB0, 8 bytes
+"0x827CCBC0" = { }  # IDA sub_827CCBC0, 8 bytes
+"0x827CCBD0" = { }  # IDA sub_827CCBD0, 8 bytes
+"0x827CD9A8" = { }  # IDA sub_827CD9A8, 8 bytes
+"0x827CD9C0" = { }  # IDA sub_827CD9C0, 8 bytes
+"0x827CD9D0" = { }  # IDA sub_827CD9D0, 8 bytes
+"0x827CD9E0" = { }  # IDA sub_827CD9E0, 8 bytes
+"0x827CDA08" = { }  # IDA sub_827CDA08, 8 bytes
+"0x827CDA20" = { }  # IDA sub_827CDA20, 8 bytes
+"0x827CDA38" = { }  # IDA sub_827CDA38, 8 bytes
+"0x827CDA48" = { }  # IDA sub_827CDA48, 8 bytes
+"0x827CDA58" = { }  # IDA sub_827CDA58, 8 bytes
+"0x827CDA60" = { }  # IDA sub_827CDA60, 8 bytes
+"0x827CE338" = { }  # IDA sub_827CE338, 8 bytes
+"0x827CE350" = { }  # IDA sub_827CE350, 8 bytes
+"0x827CE360" = { }  # IDA sub_827CE360, 8 bytes
+"0x827CE398" = { }  # IDA sub_827CE398, 8 bytes
+"0x827CE3A8" = { }  # IDA sub_827CE3A8, 8 bytes
+"0x827CE3E8" = { }  # IDA sub_827CE3E8, 8 bytes
+"0x827CE400" = { }  # IDA sub_827CE400, 8 bytes
+"0x82903400" = { }  # IDA sub_82903400, 8 bytes
+"0x8290FC50" = { }  # IDA sub_8290FC50, 8 bytes
+"0x8290FDB0" = { }  # IDA sub_8290FDB0, 8 bytes
+"0x8290FF00" = { }  # IDA sub_8290FF00, 8 bytes
+"0x82910050" = { }  # IDA sub_82910050, 8 bytes
+"0x829101A0" = { }  # IDA sub_829101A0, 8 bytes
+"0x829102F0" = { }  # IDA sub_829102F0, 8 bytes
+"0x829B1C20" = { }  # IDA sub_829B1C20, 8 bytes
+"0x829BDB80" = { }  # IDA sub_829BDB80, 8 bytes
+"0x829BDB90" = { }  # IDA sub_829BDB90, 8 bytes
+"0x829BDBA8" = { }  # IDA sub_829BDBA8, 8 bytes
+"0x829BDE30" = { }  # IDA sub_829BDE30, 8 bytes
+"0x829BDE38" = { }  # IDA sub_829BDE38, 8 bytes
+"0x829BDE48" = { }  # IDA sub_829BDE48, 8 bytes
+"0x829D01F0" = { }  # IDA sub_829D01F0, 8 bytes
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 24-byte gap 0x829639B0-0x829639C8; only this address is declared.
+"0x829639B0" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 16-byte gap 0x827CD730-0x827CD740; only this address is declared.
+"0x827CD730" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 48-byte gap 0x826BFA10-0x826BFA40; only this address is declared.
+"0x826BFA10" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 40-byte gap 0x826BF950-0x826BF978; only this address is declared.
+"0x826BF950" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 40-byte gap 0x826BF9C8-0x826BF9F0; only this address is declared.
+"0x826BF9C8" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 16-byte gap 0x826B5B48-0x826B5B58; only this address is declared.
+"0x826B5B48" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 48-byte gap 0x826A1EA8-0x826A1ED8; only this address is declared.
+"0x826A1EA8" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x10 inside the 48-byte gap 0x8234CC00-0x8234CC30; only this address is declared.
+"0x8234CC10" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x8 inside the 24-byte gap 0x827CE378-0x827CE390; only this address is declared.
+"0x827CE380" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 8-byte gap 0x827CE368-0x827CE370; only this address is declared.
+"0x827CE368" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Observed entry +0x8 inside the 16-byte gap 0x827CE3D8-0x827CE3E8; only this address is declared.
+"0x827CE3E0" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 48-byte gap 0x826A1E58-0x826A1E88; only this address is declared.
+"0x826A1E58" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 20-byte gap 0x82738E78-0x82738E8C; only this address is declared.
+"0x82738E78" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 8-byte gap 0x827CE3D8-0x827CE3E0; only this address is declared.
+"0x827CE3D8" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 32-byte gap 0x82712AE0-0x82712B00; only this address is declared.
+"0x82712AE0" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 8-byte gap 0x823E3DB0-0x823E3DB8; only this address is declared.
+"0x823E3DB0" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 16-byte gap 0x8234CC00-0x8234CC10; only this address is declared.
+"0x8234CC00" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 16-byte gap 0x8234CC20-0x8234CC30; only this address is declared.
+"0x8234CC20" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 8-byte gap 0x827CE090-0x827CE098; only this address is declared.
+"0x827CE090" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 8-byte gap 0x82705518-0x82705520; only this address is declared.
+"0x82705518" = { }
+
+# Runtime auto-resolve candidate, accepted from an observed indirect-call failure.
+# Exact start the 28-byte gap 0x823E3758-0x823E3774; only this address is declared.
+"0x823E3758" = { }
+
+# fnxf_xiii (2026-10-25): functions a vtable or another data table points to, in code no function claimed
+# (unclaimed gaps of the generated code, tools/find_gaps.py on the locals+nonarg tree). Each address is the target
+# of a code pointer in the image's .rdata/.data; size = its instructions up to the next such entry or the gap's end
+# (zero padding dropped), every one ending in blr, bctr or a tail branch. Not one is in the pdata, the manifest, this
+# file or app/src; three of the gaps already had a neighbour declared here after a run-time 'unregistered function'.
+0x822246D0 = { size = 24 }  # pointer at .rdata 0x82006A18
+0x822246E8 = { size = 24 }  # pointer at .rdata 0x82006A04
+0x82343778 = { size = 8 }  # pointer at .rdata 0x82029F58
+0x82367CC8 = { size = 36 }  # pointer at .rdata 0x820309C4
+0x823E3818 = { size = 8 }  # pointer at .rdata 0x820394C0
+0x823E39A0 = { size = 20 }  # pointer at .rdata 0x82039554
+0x823E3D48 = { size = 16 }  # pointer at .rdata 0x820394E8
+0x823E6FC8 = { size = 24 }  # pointer at .rdata 0x82039540
+0x82425DE8 = { size = 56 }  # pointer at .rdata 0x820395BC (+3 more)
+0x8244DCB0 = { size = 40 }  # pointer at .rdata 0x82044614 (+1 more)
+0x8245ABE0 = { size = 32 }  # pointer at .rdata 0x82047A68
+0x8245AC00 = { size = 32 }  # pointer at .rdata 0x82047A6C
+0x82616ED0 = { size = 12 }  # pointer at .rdata 0x820C3C18 (+1 more)
+0x82617008 = { size = 12 }  # pointer at .rdata 0x820C3C28 (+1 more)
+0x8261BD98 = { size = 20 }  # pointer at .rdata 0x820C3668
+0x82699600 = { size = 4 }  # pointer at .data 0x82A8C6AC
+0x826B5B68 = { size = 8 }  # pointer at .rdata 0x820EF660 (+2 more)
+0x82702F58 = { size = 36 }  # pointer at .rdata 0x82103CC8
+0x82706140 = { size = 8 }  # pointer at .rdata 0x82103F90
+0x82708830 = { size = 44 }  # pointer at .rdata 0x82104670
+0x82709560 = { size = 8 }  # pointer at .rdata 0x821045C8
+0x8270AB90 = { size = 12 }  # pointer at .rdata 0x8210474C
+0x8270F9A0 = { size = 16 }  # pointer at .rdata 0x82104594
+0x8270F9C0 = { size = 16 }  # pointer at .rdata 0x82104598
+0x8270F9E0 = { size = 16 }  # pointer at .rdata 0x8210458C
+0x8270FA00 = { size = 16 }  # pointer at .rdata 0x8210459C
+0x8270FA20 = { size = 32 }  # pointer at .rdata 0x821045A0
+0x82712AF0 = { size = 12 }  # pointer at .rdata 0x82104E98
+0x8272EF88 = { size = 8 }  # pointer at .rdata 0x821081D8
+0x82743B50 = { size = 8 }  # pointer at .rdata 0x82109ABC (+1 more)
+0x82746088 = { size = 40 }  # pointer at .rdata 0x82109EDC
+0x8277B700 = { size = 8 }  # pointer at .rdata 0x8211248C (+2 more)
+0x8277B710 = { size = 8 }  # pointer at .rdata 0x8211249C (+2 more)
+0x82782918 = { size = 8 }  # pointer at .rdata 0x8211DDC8
+0x8279AD68 = { size = 24 }  # pointer at .rdata 0x821205A4 (+3 more)
+0x8279AD80 = { size = 24 }  # pointer at .rdata 0x821205A8 (+3 more)
+0x8279AD98 = { size = 20 }  # pointer at .rdata 0x82120990 (+1 more)
+0x8279C1C0 = { size = 20 }  # pointer at .rdata 0x821205B4 (+3 more)
+0x827C5BC8 = { size = 16 }  # pointer at .rdata 0x821290F4
+0x827C7E38 = { size = 20 }  # pointer at .rdata 0x82128E08 (+1 more)
+0x827CC8B8 = { size = 8 }  # pointer at .rdata 0x8212B9F8
+0x827CCB10 = { size = 8 }  # pointer at .rdata 0x8212B9D4
+0x827CCB50 = { size = 8 }  # pointer at .rdata 0x8212BA24
+0x827CCB60 = { size = 8 }  # pointer at .rdata 0x8212B9D8 (+1 more)
+0x827CCB68 = { size = 8 }  # pointer at .rdata 0x8212BA6C
+0x827CCB80 = { size = 8 }  # pointer at .rdata 0x8212BA68
+0x827CCB88 = { size = 8 }  # pointer at .rdata 0x8212B9EC
+0x827CCBA8 = { size = 8 }  # pointer at .rdata 0x8212BA44
+0x827CCBC8 = { size = 8 }  # pointer at .rdata 0x8212B9E8
+0x827CCBD8 = { size = 8 }  # pointer at .rdata 0x8212B9C8
+0x827CD9B0 = { size = 8 }  # pointer at .rdata 0x8212BE74
+0x827CD9E8 = { size = 8 }  # pointer at .rdata 0x8212BE7C
+0x827CD9F0 = { size = 8 }  # pointer at .rdata 0x8212BED4
+0x827CDA28 = { size = 8 }  # pointer at .rdata 0x8212BE78
+0x827CDA40 = { size = 8 }  # pointer at .rdata 0x8212BE64
+0x827CE348 = { size = 8 }  # pointer at .rdata 0x8212C2DC
+0x827CE358 = { size = 8 }  # pointer at .rdata 0x8212C2CC
+0x827CE378 = { size = 8 }  # pointer at .rdata 0x8212C2AC
+0x827CE388 = { size = 8 }  # pointer at .rdata 0x8212C2A4
+0x827CE3B0 = { size = 8 }  # pointer at .rdata 0x8212C338
+0x827CE3C0 = { size = 8 }  # pointer at .rdata 0x8212C2A8
+0x827CE3C8 = { size = 8 }  # pointer at .rdata 0x8212C30C
+0x827CE3F0 = { size = 8 }  # pointer at .rdata 0x8212C2B0
+0x827D0648 = { size = 44 }  # pointer at .rdata 0x8212D1A8
+0x8286A448 = { size = 8 }  # pointer at .rdata 0x82157AE8 (+6 more)
+0x82899E58 = { size = 20 }  # pointer at .rdata 0x8215D330 (+8 more)
+0x828D0C70 = { size = 8 }  # pointer at .rdata 0x8215FBF4
+0x82909510 = { size = 20 }  # pointer at .rdata 0x82162018
+0x82910520 = { size = 16 }  # pointer at .rdata 0x82163B8C (+3 more)
+0x82910540 = { size = 16 }  # pointer at .rdata 0x82163B90 (+3 more)
+0x82910560 = { size = 16 }  # pointer at .rdata 0x82163B94 (+3 more)
+0x82910580 = { size = 16 }  # pointer at .rdata 0x82163B84 (+3 more)
+0x829105A0 = { size = 32 }  # pointer at .rdata 0x82163B98 (+3 more)
+0x82949BC0 = { size = 12 }  # pointer at .rdata 0x820C3248 (+3 more)
+0x8294D0A8 = { size = 32 }  # pointer at .rdata 0x82169570
+0x829630F8 = { size = 24 }  # pointer at .rdata 0x820C376C
+0x82963110 = { size = 24 }  # pointer at .rdata 0x820C3774
+0x82964088 = { size = 8 }  # pointer at .rdata 0x820C380C
+0x82964F38 = { size = 20 }  # pointer at .rdata 0x820C3978
+0x82965330 = { size = 32 }  # pointer at .rdata 0x820C39B0
+0x82965350 = { size = 32 }  # pointer at .rdata 0x820C39B8
+0x82965370 = { size = 32 }  # pointer at .rdata 0x820C39A4
+0x82965390 = { size = 32 }  # pointer at .rdata 0x820C39AC
+0x829653B0 = { size = 32 }  # pointer at .rdata 0x820C39B4
+0x82968760 = { size = 24 }  # pointer at .rdata 0x8216F52C
+0x829B48F0 = { size = 44 }  # pointer at .rdata 0x8217B360
+0x829BDB70 = { size = 8 }  # pointer at .rdata 0x8217B4CC (+4 more)
+0x829BDB78 = { size = 8 }  # pointer at .rdata 0x8217B4C4 (+4 more)
+0x829BDB98 = { size = 8 }  # pointer at .rdata 0x8217B4C0 (+4 more)
+0x829BDBA0 = { size = 8 }  # pointer at .rdata 0x8217B878 (+1 more)
+0x829BDE20 = { size = 8 }  # pointer at .rdata 0x8217B4BC (+4 more)
+0x829BDE28 = { size = 8 }  # pointer at .rdata 0x8217B4C8 (+4 more)
+0x829BDE50 = { size = 8 }  # pointer at .rdata 0x8217B4D4 (+4 more)
+0x829BDE58 = { size = 8 }  # pointer at .rdata 0x8217B4D8 (+4 more)
+0x829BDE60 = { size = 8 }  # pointer at .rdata 0x8217B4F8 (+4 more)
+0x829BDE68 = { size = 8 }  # pointer at .rdata 0x8217B4F4 (+4 more)
+0x829E3458 = { size = 8 }  # pointer at .rdata 0x82181944 (+1 more)
+0x82A01E08 = { size = 20 }  # pointer at .rdata 0x8219D360 (+1 more)

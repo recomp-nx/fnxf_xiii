@@ -1,0 +1,2 @@
+Put your own default.xex (from your copy of the game for the Xbox 360, title 535107E4) in this folder, then run
+build_switch_batched.bat from the project root. Nothing of the game is part of this project.
