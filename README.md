@@ -1,4 +1,4 @@
-# fnxf_xiii
+# FNXF XIII
 Static Recompilation of FINAL FANTASY XIII for Nintendo Switch
 
 No game files are in this repository.
