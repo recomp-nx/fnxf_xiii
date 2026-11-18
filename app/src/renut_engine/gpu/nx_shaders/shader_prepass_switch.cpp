@@ -340,6 +340,32 @@ class UamPaths {
     const std::string header = fmt::format("# fnxf_xiii uam paths 1, uam flags {}", flags);
     size_t read = 0;
     bool same = false;
+    // fnxf_xiii (2026-11-18, the user: ship the lists with a release without overwriting the player's own): a release's
+    // flag sets first, from the same name with "_release" (read only, never written; only with the same uam flags),
+    // then the recorded file's, whose line wins for a key in both. A set found here is not recorded again (Record:
+    // only a search's result that differs).
+    size_t from_release = 0;
+    {
+      std::string release = path;
+      const size_t slash = release.find_last_of("/\\");
+      const size_t dot = release.find_last_of('.');
+      release.insert(dot != std::string::npos && (slash == std::string::npos || dot > slash) ? dot : release.size(),
+                     "_release");
+      if (FILE *f = std::fopen(release.c_str(), "r")) {
+        char line[128];
+        const bool ok = std::fgets(line, sizeof(line), f) && std::string(line).rfind(header, 0) == 0 &&
+                        (line[header.size()] == '\n' || line[header.size()] == '\r' || line[header.size()] == 0);
+        while (ok && std::fgets(line, sizeof(line), f)) {
+          unsigned long long key = 0;
+          int p = -1;
+          if (std::sscanf(line, "%llx %d", &key, &p) == 2 && p >= 0 && p <= 6) {
+            paths_[uint64_t(key)] = uint8_t(p);
+            ++from_release;
+          }
+        }
+        std::fclose(f);
+      }
+    }
     if (FILE *f = std::fopen(path.c_str(), "r")) {
       char line[128];
       same = std::fgets(line, sizeof(line), f) && std::string(line).rfind(header, 0) == 0 &&
@@ -359,8 +385,8 @@ class UamPaths {
       std::fprintf(file_, "%s\n", header.c_str());
       std::fflush(file_);
     }
-    opened_ = fmt::format("{} recorded flag sets read{}{}", paths_.size(), same || read ? "" : " (a new file)",
-                          file_ ? "" : "; the file cannot be written");
+    opened_ = fmt::format("{} recorded flag sets read ({} of them the release's){}{}", paths_.size(), from_release,
+                          same || read ? "" : " (a new file)", file_ ? "" : "; the file cannot be written");
   }
   // The recorded set of 'key', or -1.
   int Find(uint64_t key) {

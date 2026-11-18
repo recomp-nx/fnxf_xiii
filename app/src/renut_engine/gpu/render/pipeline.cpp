@@ -959,6 +959,50 @@ std::vector<std::unique_ptr<Job>> LoadList() {
       }
     }
   }
+  // fnxf_xiii (2026-11-18, the user: ship the lists with a release without overwriting the player's own): a release's
+  // list, the recorded list's name with "_release" (pipeline_list_release.txt), read only and never written. Its
+  // pipelines are built ahead as the recorded list's are, and are 'listed' (Append does not add them to the recorded
+  // list again). An update ships it and leaves the recorded list alone.
+  {
+    std::filesystem::path release = path;
+    release.replace_filename(path.stem().string() + "_release" + path.extension().string());
+    if (std::filesystem::exists(release, ec)) {
+      std::ifstream in(release, std::ios::binary);
+      std::string line;
+      std::vector<char> record;
+      bool header = false, zstd = true;
+      size_t lines = 0, bad = 0, added = 0;
+      while (in && std::getline(in, line)) {
+        if (!line.empty() && line.back() == '\r')
+          line.pop_back();
+        if (line.empty())
+          continue;
+        if (line[0] == '#') {
+          if (!header && !ListHeaderOk(line, zstd))
+            break;  // another version's list: not used
+          header = true;
+          continue;
+        }
+        if (!header)
+          break;
+        ++lines;
+        auto job = std::make_unique<Job>();
+        if (!ListLineBytes(line, record, zstd) || !DecodeRecord(record.data(), record.size(), *job)) {
+          ++bad;
+          continue;
+        }
+        if (seen.insert(job->hash).second) {
+          jobs.push_back(std::move(job));
+          ++added;
+        }
+      }
+      if (header)
+        RGPU_INFO("Pipeline list {} (the release's): {} pipelines not in the recorded list ({} lines, {} not read)",
+                  release.string(), added, lines, bad);
+      else
+        RGPU_INFO("Pipeline list {} (the release's): another version or not a list, not used", release.string());
+    }
+  }
   // Records of shaders this build lacks stay out of 'listed': a later build
   // that has them lists the pipelines again.
   g_list.listed = std::move(seen);
