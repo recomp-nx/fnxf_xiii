@@ -91,7 +91,7 @@ The tools in `tools/` make the parts of a pack from the game's files (extracted 
 
 1. Build with `build_switch_batched.bat`, start it on the console and let the shader pre-pass finish.
 2. Build with `pgo_generate_switch_batched.bat` and start `fnxf_xiii_pgo.nro` on the console.
-3. Play game in this order:
+3. Play game in this order (first standard run, then pgo run doing exactly the same):
     1. Skip intro video
     2. Start new game
     3. Wait for video to go past "Final Fantasy XIII" logo, skip video.
