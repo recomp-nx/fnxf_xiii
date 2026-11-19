@@ -344,7 +344,7 @@ endif()
 rexglue_switch_add_nro(fnxf_xiii
     NAME "FNXF XIII"
     AUTHOR "recomp-nx"
-    VERSION "1.0.0"
+    VERSION "1.0.1"
     ${FNXF_XIII_ICON_ARG}
     ${FNXF_XIII_ROMFS_ARG})
 

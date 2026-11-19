@@ -15,6 +15,8 @@
 
 #include <cstdint>
 
+#include "renut_engine/gpu/render/render_scale.h"
+
 namespace renut::gpu {
 
 // A texture resolved from a dynamic-resolution target carries the level it was drawn at in its descriptor index, bits
@@ -44,5 +46,13 @@ uint32_t DrsDrawn(uint32_t host);
 uint32_t DrsCode();
 float DrsStep();
 float DrsFillOfCode(uint32_t code);
+
+// fnxf_xiii (2026-11-19, fnxf_xiii_drs_sized; from the Final Fantasy XIII-2 tree): what is resolved from a
+// dynamic-resolution target goes into a texture of the size it was drawn at (RenderScale::sized), so no shader scales
+// coordinates: DrsShaderBit is then false (the shaders' forms without the dynamic-resolution code, render/pipeline.cpp).
+// DrsDestScale: a resolve destination's scale for a target's (the target's own without it or for another target).
+bool DrsSized();
+bool DrsShaderBit();
+RenderScale DrsDestScale(const RenderScale &target);
 
 }  // namespace renut::gpu

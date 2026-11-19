@@ -1633,18 +1633,33 @@ HostTexture *ResolveTarget(u32 texture_va, plume::RenderFormat format, RenderSca
   // post-processing) keeps the other scale's texture aside and swaps them, instead of making one twice a frame.
   if (slot && slot->render_target && slot->texture && slot->host_format == format && slot->scale != scale &&
       std::memcmp(slot->desc, desc, sizeof(desc)) == 0) {
-    static std::unordered_map<u32, std::unique_ptr<HostTexture>> spares;
-    std::unique_ptr<HostTexture> &spare = spares[texture_va];
-    if (spare && spare->texture && spare->host_format == format && spare->scale == scale &&
-        std::memcmp(spare->desc, desc, sizeof(desc)) == 0) {
-      std::swap(slot, spare);
-      ++g_texture_epoch;
-    } else {
-      if (spare)
-        Retire(*spare);
-      spare = std::move(slot);
-      ++g_texture_epoch;
+    // fnxf_xiii (2026-11-19, fnxf_xiii_drs_sized): up to kSpares scales aside (a texture a dynamic-resolution level, kept
+    // for when the level comes back; the one used longest ago retired for a new one).
+    constexpr size_t kSpares = 4;
+    static std::unordered_map<u32, std::vector<std::unique_ptr<HostTexture>>> spares;
+    std::vector<std::unique_ptr<HostTexture>> &aside = spares[texture_va];
+    bool swapped = false;
+    for (auto it = aside.begin(); it != aside.end(); ++it) {
+      std::unique_ptr<HostTexture> &spare = *it;
+      if (spare && spare->texture && spare->host_format == format && spare->scale == scale &&
+          std::memcmp(spare->desc, desc, sizeof(desc)) == 0) {
+        std::unique_ptr<HostTexture> found = std::move(spare);
+        aside.erase(it);
+        aside.push_back(std::move(slot));  // the newest aside last
+        slot = std::move(found);
+        swapped = true;
+        break;
+      }
     }
+    if (!swapped) {
+      if (aside.size() >= kSpares) {
+        if (aside.front())
+          Retire(*aside.front());
+        aside.erase(aside.begin());
+      }
+      aside.push_back(std::move(slot));
+    }
+    ++g_texture_epoch;
   }
   if (slot && (!slot->render_target || std::memcmp(slot->desc, desc, sizeof(desc)) != 0 ||
                !slot->texture || slot->host_format != format || slot->scale != scale)) {

@@ -60,6 +60,7 @@ REXCVAR_DEFINE_BOOL(fnxf_xiii_deko3d_variant_log, false, "Game/Renut",
 #include "renut_engine/gpu/backend/backend.h"
 #include "renut_engine/frame_timing.h"  // fnxf_xiii (2026-11-05): the render thread's pipeline time ([pipes])
 #include "renut_engine/gpu/render/format.h"
+#include "renut_engine/gpu/render/dynamic_resolution.h"  // fnxf_xiii (2026-11-19): DrsShaderBit
 #include "renut_engine/gpu/log.h"
 #include "renut_engine/gpu/guest/resources.h"
 #include "renut_engine/gpu/render/shader_library.h"
@@ -433,7 +434,10 @@ std::unique_ptr<plume::RenderPipeline> Build(const PipelineKey &key, const Pipel
     spec[spec_count++] = plume::RenderSpecConstant(913, 1);
   // fnxf_xiii (2026-11-16): the motion vectors (key.reserved bits 8-10, render/draw.cpp), constant 914; 0 is the GLSL's
   // default (none).
-  if (const uint32_t fx = (key.reserved >> 8) & 7u)
+  // fnxf_xiii (2026-11-19): bit 0: dynamic resolution with the shaders' coordinate code this session (DrsShaderBit:
+  // off with fnxf_xiii_drs_sized, the default; renutDrsUv then folds away). Every pipeline's, the pipeline list's too
+  // (not a key bit: the same for the whole session).
+  if (const uint32_t fx = ((key.reserved >> 8) & 7u) | (DrsShaderBit() ? 1u : 0u))
     spec[spec_count++] = plume::RenderSpecConstant(914, fx);
   desc.specConstants = spec_count ? spec : nullptr;
   desc.specConstantsCount = spec_count;
@@ -957,6 +961,50 @@ std::vector<std::unique_ptr<Job>> LoadList() {
         RGPU_INFO("Pipeline list {}: {} pipelines converted to the text list {}", binary.string(), jobs.size(),
                   path.string());
       }
+    }
+  }
+  // fnxf_xiii (2026-11-18, the user: ship the lists with a release without overwriting the player's own): a release's
+  // list, the recorded list's name with "_release" (pipeline_list_release.txt), read only and never written. Its
+  // pipelines are built ahead as the recorded list's are, and are 'listed' (Append does not add them to the recorded
+  // list again). An update ships it and leaves the recorded list alone.
+  {
+    std::filesystem::path release = path;
+    release.replace_filename(path.stem().string() + "_release" + path.extension().string());
+    if (std::filesystem::exists(release, ec)) {
+      std::ifstream in(release, std::ios::binary);
+      std::string line;
+      std::vector<char> record;
+      bool header = false, zstd = true;
+      size_t lines = 0, bad = 0, added = 0;
+      while (in && std::getline(in, line)) {
+        if (!line.empty() && line.back() == '\r')
+          line.pop_back();
+        if (line.empty())
+          continue;
+        if (line[0] == '#') {
+          if (!header && !ListHeaderOk(line, zstd))
+            break;  // another version's list: not used
+          header = true;
+          continue;
+        }
+        if (!header)
+          break;
+        ++lines;
+        auto job = std::make_unique<Job>();
+        if (!ListLineBytes(line, record, zstd) || !DecodeRecord(record.data(), record.size(), *job)) {
+          ++bad;
+          continue;
+        }
+        if (seen.insert(job->hash).second) {
+          jobs.push_back(std::move(job));
+          ++added;
+        }
+      }
+      if (header)
+        RGPU_INFO("Pipeline list {} (the release's): {} pipelines not in the recorded list ({} lines, {} not read)",
+                  release.string(), added, lines, bad);
+      else
+        RGPU_INFO("Pipeline list {} (the release's): another version or not a list, not used", release.string());
     }
   }
   // Records of shaders this build lacks stay out of 'listed': a later build

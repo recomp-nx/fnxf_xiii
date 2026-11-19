@@ -39,6 +39,12 @@ REXCVAR_DEFINE_INT32(fnxf_xiii_diag_drs_fixed, 0, "Game/Diagnostics",
                      "resolution chosen (50-100, rounded to its steps); 0 off (fnxf_xiii_drs decides)")
     .range(0, 100)
     .lifecycle(rex::cvar::Lifecycle::kInitOnly);
+REXCVAR_DEFINE_BOOL(fnxf_xiii_drs_sized, true, "Game/Enhancements",
+                    "Dynamic resolution (2026-11-19): what is resolved from the scene goes into textures of the size "
+                    "it was drawn at (one kept a level, four levels), so the shaders have no dynamic-resolution code "
+                    "(the default: the shader pre-pass compiles no forms for dynamic resolution). false, a diagnostic: "
+                    "full-size textures and the shaders' coordinate code (constant 914 bit 0, compiled when first drawn)")
+    .lifecycle(rex::cvar::Lifecycle::kInitOnly);
 
 namespace fnxf_xiii {
 uint32_t RenderHeight();  // cpu/fnxf_xiii_render_resolution.cpp
@@ -154,6 +160,23 @@ float DrsFillOfCode(uint32_t code) {
   if (!code || !g.big_m)
     return 1.0f;
   return float(LevelM(int(code) - 1)) / float(g.big_m);
+}
+
+bool DrsSized() {
+  static const bool on = REXCVAR_GET(fnxf_xiii_drs_sized);
+  return on && DrsOn();
+}
+
+bool DrsShaderBit() { return DrsOn() && !DrsSized(); }
+
+RenderScale DrsDestScale(const RenderScale &target) {
+  if (!target.drs || !DrsSized())
+    return target;
+  RenderScale out = target;
+  out.drs = false;
+  const float fill = DrsFillOfCode(DrsCode());
+  out.sized = fill < 1.0f ? uint16_t(std::lround(double(fill) * 4096.0)) : 0;
+  return out;
 }
 
 uint32_t DrsDrawn(uint32_t host) {

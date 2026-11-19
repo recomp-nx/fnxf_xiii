@@ -12283,7 +12283,7 @@ void ResolveStateLocked(const u8 *device_state, u32 flags, const ClearRect *sour
     if (surface->depth) {
       HostTexture *dest =
           dest_level == 0 && dest_slice == 0
-              ? GetDepthResolveTextureLocked(dest_texture_va, surface->scale, dest_format)
+              ? GetDepthResolveTextureLocked(dest_texture_va, DrsDestScale(surface->scale), dest_format)
               : nullptr;
       ClearRect src;
       if (!dest) {
@@ -12318,7 +12318,7 @@ void ResolveStateLocked(const u8 *device_state, u32 flags, const ClearRect *sour
           dest->resolve_signature = sig;
           dest->words_current = words;
           // fnxf_xiii (2026-11-07, dynamic resolution): the level it is drawn at (its bindings' code).
-          if (const uint32_t code = surface->scale.drs ? DrsCode() : 0u; code != dest->drs_code) {
+          if (const uint32_t code = dest->scale.drs ? DrsCode() : 0u; code != dest->drs_code) {
             dest->drs_code = code;
             if (dest->words)
               dest->words->drs_code = code;
@@ -12342,7 +12342,7 @@ void ResolveStateLocked(const u8 *device_state, u32 flags, const ClearRect *sour
         }
       }
     } else if (HostTexture *dest = GetResolveTextureLocked(dest_texture_va, surface->format,
-                                                           surface->scale, dest_format)) {
+                                                           DrsDestScale(surface->scale), dest_format)) {
       ClearRect src;
       // A volume's slices are depth; stacked textures and cubes have layers.
       const bool volume = dest->dimension == TextureDimension::Tex3D && !dest->stacked;
@@ -12367,7 +12367,7 @@ void ResolveStateLocked(const u8 *device_state, u32 flags, const ClearRect *sour
       } else if (fits) {
         dest->resolve_signature = sig;
         // fnxf_xiii (2026-11-07, dynamic resolution): the level it is drawn at (its bindings' code).
-        if (const uint32_t code = surface->scale.drs ? DrsCode() : 0u; code != dest->drs_code) {
+        if (const uint32_t code = dest->scale.drs ? DrsCode() : 0u; code != dest->drs_code) {
           dest->drs_code = code;
           ++g_texture_epoch;  // the slot memos' descriptor index has it
         }
@@ -12468,6 +12468,27 @@ void ResolveStateLocked(const u8 *device_state, u32 flags, const ClearRect *sour
 
 // fnxf_xiii (2026-11-08, FSR 3.1 before the post-processing): see EarlyFsrState. At a draw while resolves of the scene's colour
 // target since its last scene draw are kept: a draw into another target is the post-processing's first.
+#if defined(PLUME_DEKO3D)
+// fnxf_xiii (2026-11-19, from the Final Fantasy XIII-2 tree): a resolve destination about to be written outside a resolve
+// (the early FSR 3.1 copies): its content is its own texture again. A destination left holding a target's image (the
+// colour hand-over: the post-processing's resolve of its target into the scene's texture, late in the frame) kept it,
+// and the next frame's post-processing sampled that image (the last frame's processed picture) instead of what was
+// written: in XIII-2 the bloom fed on itself, the picture going white in a second. A write of all of it drops what it
+// held; a part has the rest drawn in first.
+void OwnContentBeforeWriteLocked(HostTexture *d, bool whole) {
+  if (!d || (!d->handed_from && !d->held_current))
+    return;
+  if (whole) {
+    UnhandLocked(*d);
+    d->held_current = false;
+    ++g_texture_epoch;
+  } else {
+    g_colour_mat_why = 7;
+    MaterialiseLocked(*d, false);
+  }
+}
+#endif
+
 void EarlyFsrBeforePostLocked(const GuestDevice &device) {
 #if defined(PLUME_DEKO3D)
   MotionTargetState &mt = g_motion_target;
@@ -12563,6 +12584,8 @@ void EarlyFsrBeforePostLocked(const GuestDevice &device) {
     rect.bottom = std::min(rect.bottom, int32_t(out_h));
     if (rect.right <= rect.left || rect.bottom <= rect.top)
       continue;
+    OwnContentBeforeWriteLocked(dest, host_x == 0 && host_y == 0 && rect.right - rect.left >= int32_t(dest->alloc_width) &&
+                                          rect.bottom - rect.top >= int32_t(dest->alloc_height));
     dest->resolve_signature = 0;
     if (dest->drs_code != 0) {
       dest->drs_code = 0;
