@@ -316,6 +316,9 @@ std::unique_ptr<plume::RenderPipeline> Build(const PipelineKey &key, const Pipel
   desc.frontFace = (key.mode_control & 4) ? plume::RenderFrontFace::CLOCKWISE
                                           : plume::RenderFrontFace::COUNTER_CLOCKWISE;
   desc.depthClipEnabled = true;
+  // fnxf_xiii (2026-11-20, fnxf_xiii_polygon_offset): the draw's depth bias (MakeKey's mode_control bit 3), set per draw.
+  if (key.mode_control & 8u)
+    desc.dynamicDepthBiasEnabled = true;
 
   // RB_DEPTHCONTROL.
   const u32 dc = key.depth_control;

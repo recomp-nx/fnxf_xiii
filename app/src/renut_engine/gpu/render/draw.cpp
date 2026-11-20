@@ -153,6 +153,12 @@ REXCVAR_DEFINE_BOOL(fnxf_xiii_colour_handover, true, "Game/Enhancements",
                     "(the target gets another) when the target is cleared whole or overwritten by a full-screen pass; "
                     "else the resolve is drawn then. The front buffer is shown from the target's image. Same pixels")
     .lifecycle(rex::cvar::Lifecycle::kInitOnly);
+REXCVAR_DEFINE_BOOL(fnxf_xiii_polygon_offset, true, "Game/Enhancements",
+                    "Renut's renderer (2026-11-20, from FNXF XIII-2): the game's depth bias (D3DRS_DEPTHBIAS / "
+                    "SLOPESCALEDEPTHBIAS: PA_SU_SC_MODE_CNTL poly_offset_front_enable and the front offset and scale) "
+                    "applied to the draw. Without it layers drawn over an opaque mesh with a less-or-equal depth test "
+                    "z-fight the mesh's own depth (XIII-2: a boss hand's texture in different patches every frame)")
+    .lifecycle(rex::cvar::Lifecycle::kInitOnly);
 REXCVAR_DEFINE_STRING(fnxf_xiii_colour_handover_fullscreen_vs, "7BEAFB9AAA3C0039,9E2FD35343CA3962,E60FDF42E1895532,6E8956D362E66708,76B5AD2FA528F84B,"
                       "02776E10AD747E06:0,E8A7DF8CEEFE03E3:0,23C89CC5289D4ED6:1", "Game/Enhancements",
                       "fnxf_xiii_colour_handover: the game's vertex shaders (hex hashes, comma separated; 'hash:n' for one that transforms the position by float constants n..n+3) that pass the "
@@ -3865,6 +3871,13 @@ PipelineKey MakeKey(const GuestDevice &device, const ShaderRecord *vs, const Sha
   key.stencil_ref_mask = t.depth ? u32(dev.m_ValuesPacket.StencilRefMask) & 0xFFFFFF : 0;
   key.stencil_ref_mask_bf = t.depth ? u32(dev.m_ValuesPacket.StencilRefMaskBF) & 0xFFFFFF : 0;
   key.mode_control = u32(cp.ModeControl) & 0x7;
+  // fnxf_xiii (2026-11-20, fnxf_xiii_polygon_offset, from FNXF XIII-2): bit 3 = the depth bias (poly_offset_front_enable, bit 11; D3D
+  // sets the back's, bit 12, with it): the pipeline takes it as dynamic state, the draw sets the values (DrawLocked).
+  {
+    static const bool polygon_offset = REXCVAR_GET(fnxf_xiii_polygon_offset);
+    if (polygon_offset && t.depth && (u32(cp.ModeControl) & 0x1800u))
+      key.mode_control |= 8u;
+  }
   key.alpha_to_coverage = (u32(cp.ColorControl) >> 4) & 1;
   // fnxf_xiii: PA_SC_AA_MASK, 4 bits per pixel of a 2x2 quad (sample i of pixel p is bit 4p + i): a sample is written
   // when any pixel's bit for it is set (the D3D masks repeat it for the four).
@@ -9440,6 +9453,15 @@ bool DrawStateLocked(const u8 *device_state, const DrawCall &call, const ReplayC
     // Vulkan: a pipeline without the constant as dynamic state overwrites it.
     if (IsVulkan())
       g_bound.blend_constant_set = false;
+  }
+  // fnxf_xiii (2026-11-20, fnxf_xiii_polygon_offset): the front face's depth bias (D3D writes the back's the same):
+  // PA_SU_POLY_OFFSET_FRONT_SCALE (device +0x2A50, in 1/16 pixel units: D3D's slope scale x 16) and _OFFSET (+0x2A54,
+  // D3D's bias as a fraction of the depth range: 2^24 units of 24-bit depth, as Xenia takes it). Set at every such draw
+  // (the values are not in the key).
+  if (key.mode_control & 8u) {
+    const float slope = std::bit_cast<float>(device.U32(0x2A50)) * (1.0f / 16.0f);
+    const float units = std::bit_cast<float>(device.U32(0x2A54)) * 16777216.0f;
+    cmd->setDepthBias(units, 0.0f, slope);
   }
   float blend_constant[4];
   if (DrawBlendConstant(dev, key, blend_constant) &&
