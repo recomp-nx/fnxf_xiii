@@ -36,25 +36,35 @@ struct RenderScale {
   // scaled by it (Coord, DrawFactor), and the shaders that sample what is resolved from it scale their texture
   // coordinates by it too (the descriptor index's kDrsTextureBit, SharedConstants::drs_fill).
   bool drs = false;
+  // fnxf_xiii (2026-11-19, fnxf_xiii_drs_sized): a resolve destination of a dynamic-resolution target made at the size
+  // the target was drawn at: the fraction of 'code' times the guest size, times 4096 (0: none, the whole size). Its
+  // host texture holds just the drawn part, so the shaders sample it as any texture (no dynamic-resolution code in
+  // them); each level's texture is kept aside for when the level comes back (textures.cpp ResolveTarget's spares).
+  uint16_t sized = 0;
 
   // Host pixels per guest pixel of the host texture (its size).
   float Factor() const { return float(kNumerators[code]) / float(kDenominators[code]); }
   // fnxf_xiii: host pixels per guest pixel as drawn this frame.
-  float DrawFactor() const { return drs ? Factor() * g_drs_factor : Factor(); }
+  float DrawFactor() const {
+    return drs ? Factor() * g_drs_factor : sized ? Factor() * float(sized) / 4096.0f : Factor();
+  }
   bool operator==(const RenderScale &) const = default;
-  // fnxf_xiii: code and drs in one number (keys).
-  uint32_t Key() const { return code | (drs ? 16u : 0u); }  // fnxf_xiii (2026-11-08): 16 (codes up to 10)
+  // fnxf_xiii: code, drs and sized in one number (keys).
+  uint32_t Key() const {  // fnxf_xiii (2026-11-08): 16 (codes up to 10)
+    return code | (drs ? 16u : 0u) | (uint32_t(sized) << 5);
+  }
 
   // A guest pixel edge in host pixels as drawn, to the nearest: rects that share an edge in guest pixels share it in
   // host pixels.
   int32_t Coord(int32_t guest) const {
     const double host = double(guest) * kNumerators[code] / kDenominators[code];
-    return int32_t(std::lround(drs ? host * double(g_drs_factor) : host));
+    return int32_t(std::lround(drs ? host * double(g_drs_factor) : sized ? host * double(sized) / 4096.0 : host));
   }
 
   // A guest size in host pixels of the host texture (dynamic resolution aside), 1 at least.
   uint32_t Size(uint32_t guest) const {
-    return std::max<uint32_t>(uint32_t(std::lround(double(guest) * kNumerators[code] / kDenominators[code])), 1u);
+    const double host = double(guest) * kNumerators[code] / kDenominators[code];
+    return std::max<uint32_t>(uint32_t(std::lround(sized ? host * double(sized) / 4096.0 : host)), 1u);
   }
   // fnxf_xiii: a guest size in host pixels as drawn this frame, 1 at least.
   uint32_t DrawnSize(uint32_t guest) const { return std::max<uint32_t>(uint32_t(Coord(int32_t(guest))), 1u); }

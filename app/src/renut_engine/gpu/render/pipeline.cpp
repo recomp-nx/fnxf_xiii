@@ -60,6 +60,7 @@ REXCVAR_DEFINE_BOOL(fnxf_xiii_deko3d_variant_log, false, "Game/Renut",
 #include "renut_engine/gpu/backend/backend.h"
 #include "renut_engine/frame_timing.h"  // fnxf_xiii (2026-11-05): the render thread's pipeline time ([pipes])
 #include "renut_engine/gpu/render/format.h"
+#include "renut_engine/gpu/render/dynamic_resolution.h"  // fnxf_xiii (2026-11-19): DrsShaderBit
 #include "renut_engine/gpu/log.h"
 #include "renut_engine/gpu/guest/resources.h"
 #include "renut_engine/gpu/render/shader_library.h"
@@ -433,7 +434,10 @@ std::unique_ptr<plume::RenderPipeline> Build(const PipelineKey &key, const Pipel
     spec[spec_count++] = plume::RenderSpecConstant(913, 1);
   // fnxf_xiii (2026-11-16): the motion vectors (key.reserved bits 8-10, render/draw.cpp), constant 914; 0 is the GLSL's
   // default (none).
-  if (const uint32_t fx = (key.reserved >> 8) & 7u)
+  // fnxf_xiii (2026-11-19): bit 0: dynamic resolution with the shaders' coordinate code this session (DrsShaderBit:
+  // off with fnxf_xiii_drs_sized, the default; renutDrsUv then folds away). Every pipeline's, the pipeline list's too
+  // (not a key bit: the same for the whole session).
+  if (const uint32_t fx = ((key.reserved >> 8) & 7u) | (DrsShaderBit() ? 1u : 0u))
     spec[spec_count++] = plume::RenderSpecConstant(914, fx);
   desc.specConstants = spec_count ? spec : nullptr;
   desc.specConstantsCount = spec_count;

@@ -19,7 +19,7 @@ namespace renut::nxs {
 
 namespace {
 // Bump when the translation changes in a way the header's text does not show (shader_recompiler.cpp).
-constexpr uint64_t kTranslatorVersion = 7;  // 7: the motion vectors a compile-time switch (constant 914 bit 2, 2026-11-16); 2: TrimUnusedFunctions; 3: the fnxf_xiii_ names in the GLSL (2026-10-22);
+constexpr uint64_t kTranslatorVersion = 8;  // 8: dynamic resolution a compile-time switch (constant 914 bit 0, 2026-11-19); 7: the motion vectors a compile-time switch (constant 914 bit 2, 2026-11-16); 2: TrimUnusedFunctions; 3: the fnxf_xiii_ names in the GLSL (2026-10-22);
                                             // 4: the old deko3d passes (2026-10-23); 5: MotionVectorPass (2026-11-06);
                                             // 6: the bound 2D fetches' descriptor word (dynamic resolution, 2026-11-07)
 }  // namespace

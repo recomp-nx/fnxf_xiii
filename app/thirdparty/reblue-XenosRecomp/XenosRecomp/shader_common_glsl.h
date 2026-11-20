@@ -115,6 +115,7 @@ uvec2 renutGuestSize(uvec2 hostSize, uint word) { return hostSize; }
 #ifndef SPIRV_CROSS_CONSTANT_ID_914
 #define SPIRV_CROSS_CONSTANT_ID_914 0u
 #endif
+// fnxf_xiii (2026-11-19): bit 0 dynamic resolution with the shaders' coordinate code (renutDrsUv below), bit 2 the motion.
 const uint g_renutWordFx = SPIRV_CROSS_CONSTANT_ID_914;
 
 uvec2 getTexture2DSize(uint t) { return renutGuestSize(uvec2(textureSize(sampler2D(dkTex(t)), 0)), t); }
@@ -123,18 +124,25 @@ uvec2 getTexture2DSize(uint t) { return renutGuestSize(uvec2(textureSize(sampler
 // target holds its picture in the top-left part its level drew (descriptor index bits 20-25: 0 none, n the fraction
 // 1 - (n - 1) x g_DrsStep): the coordinates in the guest's [0, 1] scaled to it, and kept off its edge's texel centre (a
 // bilinear tap there would blend in what lies beyond, not drawn this time). Offsets in guest texels scale with it.
-// No branch (selects only): the word, the fraction and the bound are the same at every fetch of a texture, so they are
-// worked out once a shader; a fetch adds a multiply and a minimum.
 vec2 renutDrsUv(uint word, vec2 hostSize, vec2 uv)
 {
+    // fnxf_xiii (2026-11-19): constant 914's bit 0 is the session's dynamic resolution with this code
+    // (render/pipeline.cpp DrsShaderBit). Off (the default, fnxf_xiii_drs_sized: the textures are made at the drawn
+    // size): the coordinates as they are, and uam folds the rest away (worked out at every fetch with dynamic resolution
+    // off too before). On: the texture's code is tested first, and the fraction and the bound are worked out only for a
+    // texture drawn at a fraction.
+    if ((g_renutWordFx & 1u) == 0u)
+        return uv;
     const uint code = (word >> 20u) & 63u;
-    const float f = 1.0 - float(max(code, 1u) - 1u) * g_DrsStep;
+    if (code == 0u)
+        return uv;
+    const float f = 1.0 - float(code - 1u) * g_DrsStep;
     // fnxf_xiii (2026-11-11): the last texel the level drew whole. A size times the fraction can end mid-texel (a 270-line
     // target at 630 of 1080 lines: 157.5); the rasteriser leaves that half-covered texel out (its centre on the edge), so
     // the bound is the centre of the one before, not the edge less half a texel (a bilinear tap there took half of the
     // stale texel: bloom's blurs carried it up the bottom of the picture). 0.501: a whole size stays whole in float.
     const vec2 bound = (ceil(vec2(f) * hostSize - 0.501) - 0.5) / hostSize;
-    return code == 0u ? uv : min(uv * f, bound);
+    return min(uv * f, bound);
 }
 
 vec4 tfetch2D(uint t, uint s, vec2 uv, vec2 offset)

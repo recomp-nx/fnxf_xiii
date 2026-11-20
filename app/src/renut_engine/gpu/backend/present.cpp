@@ -50,9 +50,11 @@ REXCVAR_DEFINE_DOUBLE(fnxf_xiii_renut_diag_show_gamma, 1.0, "Game/Renut",
                       "Diagnostic: fnxf_xiii_renut_diag_show_texture's exponent (depth near 1 shows with 64 or so)");
 
 // fnxf_xiii (2026-10-20): see GameGamma below.
-REXCVAR_DEFINE_BOOL(fnxf_xiii_renut_game_gamma, false, "Game/Renut",
-                    "Apply the gamma ramp the game loads to the output, as the Xbox 360's display and fnxf_xiii's own "
-                    "renderer do (N&B's darkens the midtones, about x^1.17). Off: Renut's output as before");
+// fnxf_xiii (2026-11-20): on by default: the game's Brightness / Gamma option sets this ramp (D3DDevice_SetGammaRamp /
+// SetPWLGamma, the game's own code: the device's ramp read at each Swap), and with it off the option did nothing.
+REXCVAR_DEFINE_BOOL(fnxf_xiii_renut_game_gamma, true, "Game/Renut",
+                    "Apply the gamma ramp the game loads to the output, as the Xbox 360's display does: the game's "
+                    "Brightness / Gamma option. Off: the ramp ignored (the option does nothing)");
 
 REXCVAR_DEFINE_BOOL(renut_vsync, true, "Nuts&Bolts/Graphics",
                     "Show each frame at the display's refresh: no tearing, and the game runs at "

@@ -106,7 +106,9 @@ namespace {
 // fnxf_xiii (2026-10-20): bnx4 with uam fnxf_xiii flag 1024 (the 128-bit bone rows) in the default flags: a cache
 // compiled before is another compiler's.
 // fnxf_xiii (2026-10-21): bnx5, uam with PressureSink (flags 2048 + 8192 in the default 11711).
-constexpr char kCacheTag[16] = "uam110-sw8-bnx5";
+// fnxf_xiii (2026-11-17): bnx6, PressureSink no longer sinks past a fixed-register write (a fragment shader's colour
+// outputs): with 2048 + 8192 + 65536 it overwrote an output it had passed. Every DKSH is compiled again.
+constexpr char kCacheTag[16] = "uam110-sw8-bnx6";
 
 constexpr uint32_t kDkshMagic = 0x48534B44u;  // "DKSH", the first word of every record's data
 // fnxf_xiii (2026-10-22): the cache's generation (<path>.gen, a u32), for compiles made better without starting the
