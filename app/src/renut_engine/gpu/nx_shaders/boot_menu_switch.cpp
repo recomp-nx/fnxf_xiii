@@ -581,7 +581,13 @@ bool DockedNow() {
   return rex::ui::switch_saltynx::BaseMode(appletGetOperationMode() == AppletOperationMode_Console);
 }
 
+// fnxf_xiii (2026-11-21): which anti-aliasing the two modes' pages ask for: bit 0 a page with FSR 3.1, bit 1 one without
+// (-1: Apply not run). The shader pre-pass compiles for both pages, not only the one this start applies.
+int g_fsr3_modes = -1;
+
 void Apply(const Settings &settings) {
+  g_fsr3_modes = ((settings.mode[kHandheld].aa == kAaFsr3 || settings.mode[kDocked].aa == kAaFsr3) ? 1 : 0) |
+                 ((settings.mode[kHandheld].aa != kAaFsr3 || settings.mode[kDocked].aa != kAaFsr3) ? 2 : 0);
   const bool docked = DockedNow();
   const Profile &s = settings.mode[docked ? kDocked : kHandheld];
   const Choice &language = g_choices[settings.language];
@@ -1214,5 +1220,8 @@ void RunBootMenu(const std::filesystem::path &user_data_root) {
   }
   Apply(s);
 }
+
+// fnxf_xiii (2026-11-21): boot_menu_switch.h.
+int BootMenuFsr3Modes() { return g_fsr3_modes; }
 
 }  // namespace renut::nxs
